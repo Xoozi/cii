@@ -4,6 +4,9 @@
 *.obj
 *.elf
 
+# Generated files
+bin/
+
 # Precompiled Headers
 *.gch
 *.pch
