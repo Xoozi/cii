@@ -3,11 +3,9 @@
 
 #include <setjmp.h>
 
-#define REASON_LEN 256
 
 struct except_t{
     char *type;
-	char reason[REASON_LEN];
 }; 
 
 extern struct except_t RuntimeException;
@@ -18,6 +16,7 @@ extern struct except_t ArithmeticException;
 extern struct except_t NullPointerException;
 extern struct except_t AssertFailedException;
 extern struct except_t SignalException;
+extern struct except_t MemFailedException;
 
 
 struct except_frame{
@@ -25,6 +24,7 @@ struct except_frame{
 	jmp_buf env;
 	const char *file;
     const char *func;
+    const char *reason;
 	int line;
 	struct except_t *exception;
 };
@@ -36,6 +36,7 @@ struct except_context{
     void (*default_handler)(struct except_t *e,
                             const char *file,
                             const char *func,
+                            const char *reason,
                             int line);
 };
 
@@ -48,28 +49,27 @@ extern volatile struct except_context except_ctx;
 void except_set_default_handler(void (*handler)(struct except_t *e,
                                                 const char *file,
                                                 const char *func,
+                                                const char *reason,
                                                 int line));
-void except_raise_reason(struct except_t *e, 
-                const char *reason, 
-                const char *file,
-                const char *func,
-                int line);
 void except_raise(struct except_t *e, 
                 const char *file,
                 const char *func,
+                const char *reason,
                 int line);
 
 void set_signal_except(int sig);
 
 int get_except_signal();
 
+
+
 #define EXCEPT_SIGNAL get_except_signal()
 
-#define RAISE(e, r) except_raise_reason(&(e), r, __FILE__, __func__, __LINE__)
+#define RAISE(e, r) except_raise(&(e), __FILE__, __func__, (r), __LINE__)
 
 
 #define RERAISE except_raise(frame.exception, \
-	frame.file, frame.func, frame.line)
+	frame.file, frame.func, frame.reason, frame.line)
 
 
 #define TRY do { \

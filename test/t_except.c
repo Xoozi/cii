@@ -23,11 +23,11 @@ main(int argc, char *argv[])
     TRY
         test_e(num);
     CATCH(IOException)
-        printf("Catch a %s, reason:%s\n", 
-                IOException.type, IOException.reason);
+        printf("Catch a %s", 
+                IOException.type);
     CATCH(IndexOutOfBoundsException)
-        printf("Catch a %s, reason:%s\n", 
-                IndexOutOfBoundsException.type, IndexOutOfBoundsException.reason);
+        printf("Catch a %s",
+                IndexOutOfBoundsException.type);
     END_TRY;
 
 
@@ -75,10 +75,11 @@ test_e(int num)
             break;
         }
     CATCH(IOException)
-        printf("test_e catch a %s, reason:%s\n", 
-                IOException.type, IOException.reason);
+        printf("test_e catch a %s\n",
+                IOException.type);
     CATCH(SignalException)
-        printf("Get a signal:%d\n", EXCEPT_SIGNAL);
+        printf("Get a signal:%d\n", 
+                EXCEPT_SIGNAL);
     FINALLY
         printf("test_e do clean work\n");
     END_TRY;
