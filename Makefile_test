@@ -8,7 +8,7 @@ LIB_DIR = lib
 
 LIB_NAME = cii
 
-all: double t_arith t_except t_mem
+all: double t_arith t_except t_mem t_atom
 
 double: double.c cii.h $(LIB_CII)
 	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR)
@@ -20,4 +20,7 @@ t_except: t_except.c except.h
 	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
 
 t_mem: t_mem.c mem.h
+	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+
+t_atom: t_atom.c mem.h atom.h
 	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)

@@ -6,7 +6,7 @@ INCLUDE_DIR = include
 
 LIB = $(LIB_DIR)/libcii.a
 
-objects = arith.o assert.o except.o memchk.o
+objects = arith.o assert.o except.o memchk.o atom.o
 
 all: $(objects)
 	ar crs $(LIB) $(objects)
@@ -21,6 +21,9 @@ assert.o: assert.c assert.h except.h
 	gcc -g -c $< -I$(INCLUDE_DIR)
 
 memchk.o: memchk.c mem.h assert.h except.h
+	gcc -g -c $< -I$(INCLUDE_DIR)
+
+atom.o: atom.c atom.h assert.h mem.h
 	gcc -g -c $< -I$(INCLUDE_DIR)
 
 clean:
