@@ -3,20 +3,19 @@
 
 #include <setjmp.h>
 
+#define T except_t
 
-struct except_t{
+typedef struct T{
     char *type;
-}; 
+}T; 
 
-extern struct except_t RuntimeException;
-extern struct except_t IndexOutOfBoundsException;
-extern struct except_t IOException;
-extern struct except_t IllegalArgumentException;
-extern struct except_t ArithmeticException;
-extern struct except_t NullPointerException;
-extern struct except_t AssertFailedException;
-extern struct except_t SignalException;
-extern struct except_t MemFailedException;
+const extern T RuntimeException;
+const extern T IndexOutOfBoundsException;
+const extern T IOException;
+const extern T IllegalArgumentException;
+const extern T ArithmeticException;
+const extern T NullPointerException;
+const extern T SignalException;
 
 
 struct except_frame{
@@ -26,14 +25,14 @@ struct except_frame{
     const char *func;
     const char *reason;
 	int line;
-	struct except_t *exception;
+	const T *exception;
 };
 
 struct except_context{
 	int except_flag; 
     int sig;
     struct except_frame *stack;
-    void (*default_handler)(struct except_t *e,
+    void (*default_handler)(const T *e,
                             const char *file,
                             const char *func,
                             const char *reason,
@@ -46,12 +45,12 @@ enum { Except_entered=0, Except_raised,
 extern volatile struct except_context except_ctx;
 
 
-void except_set_default_handler(void (*handler)(struct except_t *e,
+void except_set_default_handler(void (*handler)(const T *e,
                                                 const char *file,
                                                 const char *func,
                                                 const char *reason,
                                                 int line));
-void except_raise(struct except_t *e, 
+void except_raise(const T *e, 
                 const char *file,
                 const char *func,
                 const char *reason,
@@ -104,5 +103,5 @@ int get_except_signal();
 		} if (except_ctx.except_flag == Except_raised) RERAISE; \
 } while (0)
 
-
+#undef T
 #endif /*EXCEPT_INCLUDE*/

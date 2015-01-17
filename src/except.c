@@ -5,7 +5,9 @@
 #include"except.h"
 #include"assert.h"
 
-static void default_except_handler(struct except_t *e,
+#define T except_t
+
+static void default_except_handler(const T *e,
                                     const char *file,
                                     const char *func,
                                     const char *reason,
@@ -18,18 +20,16 @@ volatile struct except_context except_ctx = {.default_handler = default_except_h
                                         .sig = 0,
                                         .stack = NULL};
 
-struct except_t RuntimeException            = {"RuntimeException"};
-struct except_t IndexOutOfBoundsException   = {"IndexOutOfBoundsException"};
-struct except_t IOException                 = {"IOException"};
-struct except_t IllegalArgumentException    = {"IllegalArgumentException"};
-struct except_t ArithmeticException         = {"ArithmeticException"};
-struct except_t NullPointerException        = {"NullPointerException"};
-struct except_t AssertFailedException       = {"AssertFailedException"};
-struct except_t SignalException             = {"SignalException"};
-struct except_t MemFailedException          = {"MemFailedException"};
+const T RuntimeException            = {"RuntimeException"};
+const T IndexOutOfBoundsException   = {"IndexOutOfBoundsException"};
+const T IOException                 = {"IOException"};
+const T IllegalArgumentException    = {"IllegalArgumentException"};
+const T ArithmeticException         = {"ArithmeticException"};
+const T NullPointerException        = {"NullPointerException"};
+const T SignalException             = {"SignalException"};
 
 void
-except_set_default_handler(void (*handler)(struct except_t *e,
+except_set_default_handler(void (*handler)(const T *e,
                                             const char *file,
                                             const char *func,
                                             const char *reason,
@@ -40,7 +40,7 @@ except_set_default_handler(void (*handler)(struct except_t *e,
 
 
 void 
-except_raise(struct except_t *e, 
+except_raise(const T *e, 
                 const char *file,
                 const char *func,
                 const char *reason,
@@ -77,7 +77,7 @@ get_except_signal()
 
 static
 void 
-default_except_handler(struct except_t *e,
+default_except_handler(const T *e,
                         const char *file,
                         const char *func,
                         const char *reason,

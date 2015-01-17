@@ -7,6 +7,8 @@
 
 #define HTAB_LEN 2048
 
+const except_t MemFailedException          = {"MemFailedException"};
+
 union align{
     int i;
     long l;

@@ -1,5 +1,9 @@
 #ifndef MEM_INCLUDE
 #define MEM_INCLUDE
+#include<stdlib.h>
+#include"except.h"
+
+extern const except_t MemFailedException;
 
 void *mem_alloc(ssize_t len, 
                 const char *file,
