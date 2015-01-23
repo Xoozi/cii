@@ -9,7 +9,7 @@ LIB_DIR = lib
 LIB_NAME = cii
 
 all: double t_arith t_except t_mem t_atom t_arena\
-	t_list t_dlist wf xref
+	t_list t_dlist wf xref t_array
 
 double: double.c cii.h $(LIB_CII)
 	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR)
@@ -40,3 +40,6 @@ wf: wf.c getword.c getword.h mem.h atom.h table.h
 
 xref: xref.c getword.c getword.h mem.h atom.h table.h atom.h set.h
 	gcc -g -o $(BIN_DIR)/$@ $< test/getword.c -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+
+t_array: t_array.c array.h
+	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
