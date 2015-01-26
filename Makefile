@@ -7,7 +7,8 @@ INCLUDE_DIR = include
 LIB = $(LIB_DIR)/libcii.a
 
 objects = arith.o assert.o except.o memchk.o atom.o\
-		  arena.o list.o dlist.o table.o set.o array.o
+		  arena.o list.o dlist.o table.o set.o array.o\
+		  seq.o ring.o
 
 all: $(objects)
 	ar crs $(LIB) $(objects)
@@ -43,6 +44,12 @@ set.o: set.c set.h assert.h mem.h
 	gcc -g -c $< -I$(INCLUDE_DIR)
 
 array.o: array.c array.h arrayrep.h assert.h mem.h
+	gcc -g -c $< -I$(INCLUDE_DIR)
+
+seq.o: seq.c seq.h array.h arrayrep.h assert.h mem.h
+	gcc -g -c $< -I$(INCLUDE_DIR)
+
+ring.o: ring.c ring.h assert.h mem.h
 	gcc -g -c $< -I$(INCLUDE_DIR)
 
 clean:

@@ -116,7 +116,7 @@ dlist_free(T *dlist)
 {
     T index, next;
 
-    assert(dlist);
+    assert(dlist && *dlist);
     
     index = (*dlist)->next;
     while(index != *dlist){

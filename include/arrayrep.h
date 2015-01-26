@@ -15,4 +15,6 @@ extern void arrayrep_init(T array,
                             ssize_t size,
                             void *ary);
 
+#undef T
+
 #endif /*ARRAYREP_INCLUDE*/
