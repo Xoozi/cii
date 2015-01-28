@@ -9,43 +9,50 @@ LIB_DIR = lib
 LIB_NAME = cii
 
 all: double t_arith t_except t_mem t_atom t_arena\
-	t_list t_dlist wf xref t_array t_seq t_ring
+	t_list t_dlist wf xref t_array t_seq t_ring\
+	t_bit t_sparsearray
 
 double: double.c cii.h $(LIB_CII)
-	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR)
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR)
 
 t_arith: t_arith.c arith.h
-	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
 
 t_except: t_except.c except.h
-	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
 
 t_mem: t_mem.c mem.h
-	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
 
 t_atom: t_atom.c mem.h atom.h
-	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
 
 t_arena: t_arena.c arena.h
-	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
 
 t_list: t_list.c list.h
-	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
 
 t_dlist: t_dlist.c dlist.h
-	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
 
 wf: wf.c getword.c getword.h mem.h atom.h table.h
-	gcc -g -o $(BIN_DIR)/$@ $< test/getword.c -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+	gcc -pg -g -o $(BIN_DIR)/$@ $< test/getword.c -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
 
 xref: xref.c getword.c getword.h mem.h atom.h table.h atom.h set.h
-	gcc -g -o $(BIN_DIR)/$@ $< test/getword.c -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+	gcc -pg -g -o $(BIN_DIR)/$@ $< test/getword.c -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
 
 t_array: t_array.c array.h
-	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
 
 t_seq: t_seq.c seq.h
-	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
 
 t_ring: t_ring.c ring.h
-	gcc -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+
+t_bit: t_bit.c bit.h
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+
+t_sparsearray: t_sparsearray.c sparsearray.h
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
