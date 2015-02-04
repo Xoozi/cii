@@ -99,7 +99,7 @@ fmt_print(const char *fmt, ...)
     va_list ap;
 
     va_start(ap, fmt);
-    fm_vfmt(outc, stdout, fmt, ap);
+    fmt_vfmt(outc, stdout, fmt, ap);
     va_end(ap);
 }
 
@@ -112,7 +112,7 @@ fmt_fprint(FILE *stream,
     va_list ap;
 
     va_start(ap, fmt);
-    fm_vfmt(outc, stream, fmt, ap);
+    fmt_vfmt(outc, stream, fmt, ap);
     va_end(ap);
 }
 
@@ -211,7 +211,7 @@ fmt_vfmt(int (*put)(int c, void *cl),
             if(fmt_flags){
                 c = *fmt;
                 for(; c && strchr(fmt_flags, c); c = *++fmt){
-                    asert(flags[c] < 255);
+                    assert(flags[c] < 255);
                     flags[c]++;
                 }
             }

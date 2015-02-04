@@ -10,7 +10,7 @@ LIB_NAME = cii
 
 all: double t_arith t_except t_mem t_atom t_arena\
 	t_list t_dlist wf xref t_array t_seq t_ring\
-	t_bit t_sparsearray
+	t_bit t_sparsearray t_fmt t_bst
 
 double: double.c cii.h $(LIB_CII)
 	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR)
@@ -56,3 +56,9 @@ t_bit: t_bit.c bit.h
 
 t_sparsearray: t_sparsearray.c sparsearray.h
 	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+
+t_fmt: t_fmt.c fmt.h except.h
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+
+t_bst: t_bst.c getword.c getword.h mem.h atom.h bst.h
+	gcc -pg -g -o $(BIN_DIR)/$@ $< test/getword.c -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)

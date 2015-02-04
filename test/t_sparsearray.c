@@ -40,11 +40,11 @@ main(int argc, char *argv[])
 
     printf("1 length of sarray:%zd\n", sparsearray_length(sarray));
 
-    printf("2 value of 77777:%d\n", sparsearray_get(sarray, 77777));
+    printf("2 value of 77777:%ld\n", (long)sparsearray_get(sarray, 77777));
 
 
     length = sparsearray_length(sarray);
-    printf("3 value of pos:%zd = %d\n", length-1, sparsearray_get_at(sarray, length-1));
+    printf("3 value of pos:%zd = %ld\n", length-1, (long)sparsearray_get_at(sarray, length-1));
 
-    printf("4 value of key:%zd = %d\n", TEST_MAX-5, sparsearray_get(sarray, TEST_MAX-5));
+    printf("4 value of key:%d = %ld\n", TEST_MAX-5, (long)sparsearray_get(sarray, TEST_MAX-5));
 }
