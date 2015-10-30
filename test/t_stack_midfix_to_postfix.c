@@ -19,15 +19,16 @@ main(int argc, char *argv[])
     
     for(i = 0; i < N; i++){
         if(')' == a[i]){
-            char op = (char)stack_pop(stack);
-            printf("%c ", op);
+            long op = (long)stack_pop(stack);
+            printf("%c ", (char)op);
         }
 
         if('+' == a[i] ||
            '-' == a[i] ||
            '*' == a[i] ||
            '/' == a[i]){
-            stack_push(stack, (void *)a[i]);
+            long p = a[i];
+            stack_push(stack, (void *)p);
         }
 
         if(a[i] >= '0' &&

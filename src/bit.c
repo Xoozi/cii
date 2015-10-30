@@ -42,7 +42,7 @@ static unsigned char lsbmask[] = {
 static 
 inline 
 int
-bit_in_set(unsigned char *bytes, ssize_t position)
+_bit_in_set(unsigned char *bytes, ssize_t position)
 {
     return ((bytes[position / 8] >> (position % 8)) & 1);
 }
@@ -50,7 +50,7 @@ bit_in_set(unsigned char *bytes, ssize_t position)
 static 
 inline 
 T 
-bit_copy(T t)
+_bit_copy(T t)
 {
     T bset;
 
@@ -127,7 +127,7 @@ bit_get     (T bset, ssize_t position)
     assert(bset);
     assert(0 <= position && position < bset->length);
 
-    return bit_in_set(bset->bytes, position);
+    return _bit_in_set(bset->bytes, position);
 }
 
 
@@ -139,7 +139,7 @@ bit_put     (T bset, ssize_t position, int bit)
     assert(bset);
     assert(0 == bit || 1 == bit);
     assert(0 <= position && position < bset->length);
-    prev = bit_in_set(bset->bytes, position);
+    prev = _bit_in_set(bset->bytes, position);
 
     if(1 == bit)
         bset->bytes[position / 8] |= 1 << (position % 8);
@@ -271,35 +271,35 @@ bit_map     (T bset,
 
     assert(bset);
     for( n = 0; n < bset->length; n++)
-        apply(n, bit_in_set(bset->bytes, n), cl);
+        apply(n, _bit_in_set(bset->bytes, n), cl);
 }
 
 
 T
 bit_union   (T s, T t)
 {
-    setop(bit_copy(t), bit_copy(t), bit_copy(s), |)
+    setop(_bit_copy(t), _bit_copy(t), _bit_copy(s), |)
 }
 
 
 T
 bit_inter   (T s, T t)
 {
-    setop(bit_copy(t), bit_new(t->length), bit_new(s->length), &)
+    setop(_bit_copy(t), bit_new(t->length), bit_new(s->length), &)
 }
 
 
 T
 bit_minus   (T s, T t)
 {
-    setop(bit_new(s->length), bit_new(t->length), bit_copy(s), & ~)
+    setop(bit_new(s->length), bit_new(t->length), _bit_copy(s), & ~)
 }
 
 
 T
 bit_diff    (T s, T t)
 {
-    setop(bit_new(s->length), bit_copy(t), bit_copy(s), ^)
+    setop(bit_new(s->length), _bit_copy(t), _bit_copy(s), ^)
 }
 
 

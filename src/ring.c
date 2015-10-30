@@ -21,11 +21,11 @@ struct T{
 };
 
 
-static struct node* ring_node(T ring, ssize_t position);
+static struct node* _ring_node(T ring, ssize_t position);
 
-static void ring_node_delete(T ring, struct node *p);
+static void _ring_node_delete(T ring, struct node *p);
 
-static inline void reset_lastget(T ring);
+static inline void _reset_lastget(T ring);
 
 T
 ring_new(void)
@@ -99,7 +99,7 @@ ring_get(T ring, ssize_t position)
     else if(position == (ring->lastget_pos - 1)){
         q = ring->lastget_node->llink;
     }else{
-        q = ring_node(ring, position);
+        q = _ring_node(ring, position);
     }
 
     ring->lastget_pos = position;
@@ -117,7 +117,7 @@ ring_put(T ring, ssize_t position, void *x)
     assert(ring);
     assert(position >= 0 && position < ring->length);
 
-    q = ring_node(ring, position);
+    q = _ring_node(ring, position);
     prev = q->value;
 
     q->value = x;
@@ -143,7 +143,7 @@ ring_add(T ring, ssize_t position, void *x)
     else{
        
         i = position < 0 ? position + ring->length : position - 1;
-        q = ring_node(ring, position);
+        q = _ring_node(ring, position);
         NEW(p);
         p->llink = q->llink;
         q->llink->rlink = p;
@@ -152,7 +152,7 @@ ring_add(T ring, ssize_t position, void *x)
 
         ring->length++;
 
-        reset_lastget(ring);
+        _reset_lastget(ring);
         return p->value = x;
     }
 }
@@ -165,7 +165,7 @@ ring_add_low(T ring, void *x)
     ring_add_high(ring, x);
     ring->head = ring->head->llink;
 
-    reset_lastget(ring);
+    _reset_lastget(ring);
     return x;
 }
 
@@ -189,7 +189,7 @@ ring_add_high(T ring, void *x)
 
     ring->length++;
 
-    reset_lastget(ring);
+    _reset_lastget(ring);
 
     return p->value = x;
 }
@@ -205,16 +205,16 @@ ring_remove(T ring, ssize_t position)
     assert(ring->length > 0);
     assert(position >= 0 && position < ring->length);
 
-    q = ring_node(ring, position);
+    q = _ring_node(ring, position);
 
     if(0 == position)
         ring->head = ring->head->rlink;
 
     x = q->value;
     
-    ring_node_delete(ring, q);
+    _ring_node_delete(ring, q);
 
-    reset_lastget(ring);
+    _reset_lastget(ring);
     return x;
 }
 
@@ -225,7 +225,7 @@ ring_remove_low(T ring)
     assert(ring);
     assert(ring->length > 0);
     ring->head = ring->head->rlink;
-    reset_lastget(ring);
+    _reset_lastget(ring);
     return ring_remove_high(ring);
 }
 
@@ -242,9 +242,9 @@ ring_remove_high(T ring)
     q = ring->head->llink;
     x = q->value;
 
-    ring_node_delete(ring, q); 
+    _ring_node_delete(ring, q); 
 
-    reset_lastget(ring);
+    _reset_lastget(ring);
     return x;
 }
 
@@ -262,17 +262,17 @@ ring_rotate(T ring, ssize_t n)
         position = n % ring->length;
     else
         position = n + ring->length;
-    q = ring_node(ring, position);
+    q = _ring_node(ring, position);
 
     ring->head = q;
 
-    reset_lastget(ring);
+    _reset_lastget(ring);
 }
 
 
 static 
 struct node* 
-ring_node(T ring, ssize_t position)
+_ring_node(T ring, ssize_t position)
 {
     struct node* pn;
     int n;
@@ -291,7 +291,7 @@ ring_node(T ring, ssize_t position)
 
 static 
 void 
-ring_node_delete(T ring, struct node *p)
+_ring_node_delete(T ring, struct node *p)
 {
     p->llink->rlink = p->rlink;
     p->rlink->llink = p->llink;
@@ -303,7 +303,7 @@ ring_node_delete(T ring, struct node *p)
 static 
 inline 
 void 
-reset_lastget(T ring)
+_reset_lastget(T ring)
 {
     ring->lastget_node = ring->head;
     ring->lastget_pos = 0;

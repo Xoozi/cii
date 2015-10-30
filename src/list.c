@@ -41,7 +41,7 @@ list_list(void *x, ...)
 
 static
 T
-list_list_g(void *x, ...)
+_list_list_g(void *x, ...)
 {
     va_list ap;
     T head, cur, next;
@@ -60,6 +60,7 @@ list_list_g(void *x, ...)
             cur = next;
         }
     }
+    va_end(ap);
     cur->rest = NULL;
     return head;
 }
@@ -78,7 +79,7 @@ list_append(T list, T tail)
 
 static
 T
-list_append_g(T list, T tail)
+_list_append_g(T list, T tail)
 {
     T p = list;
     if(NULL == p){
@@ -135,7 +136,7 @@ list_reverse(T list)
 
 static
 T
-list_reverse_g(T list)
+_list_reverse_g(T list)
 {
     T head = NULL, next;
 

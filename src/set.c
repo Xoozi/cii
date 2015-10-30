@@ -20,9 +20,9 @@ struct T{
     }**buckets;
 };
 
-static int cmpatom(const void *x, const void *y);
-static unsigned long hashatom(const void *x);
-static T set_copy(T t, int hint);
+static int _cmpatom(const void *x, const void *y);
+static unsigned long _hashatom(const void *x);
+static T _set_copy(T t, int hint);
 
 
 T
@@ -41,8 +41,8 @@ set_new(int hint,
 
     set = ALLOC(sizeof(*set) + primes[i-1] * sizeof(set->buckets[0]));
     set->size = primes[i-1];
-    set->cmp = cmp ? cmp : cmpatom;
-    set->hash= hash ? hash : hashatom;
+    set->cmp = cmp ? cmp : _cmpatom;
+    set->hash= hash ? hash : _hashatom;
     set->buckets = (struct member **) (set + 1);
     for(i = 0; i < set->size; i++)
         set->buckets[i] = NULL;
@@ -209,13 +209,13 @@ set_union(T s, T t)
     if(NULL == s){
 
         assert(t);
-        return set_copy(t, t->size);
+        return _set_copy(t, t->size);
     }else if(NULL == t){
-        return set_copy(s, s->size); 
+        return _set_copy(s, s->size); 
     }else{
         assert(s->cmp == t->cmp && s->hash == t->hash);
 
-        set = set_copy(s, arith_max(s->size, t->size));
+        set = _set_copy(s, arith_max(s->size, t->size));
         for (i = 0; i < t->size; i++)
             for (q = t->buckets[i]; q; q = q->link)
                 set_put(set, q->member);
@@ -274,7 +274,7 @@ set_minus(T s, T t)
         assert(s);
         return set_new(t->size, t->cmp, t->hash);
     }else if(NULL == s){
-        return set_copy(t, t->size);
+        return _set_copy(t, t->size);
     }else{
         assert(s->cmp == t->cmp && s->hash == t->hash);
 
@@ -307,9 +307,9 @@ set_diff(T s, T t)
     if(NULL == s){
 
         assert(t);
-        return set_copy(t, t->size);
+        return _set_copy(t, t->size);
     }else if(NULL == t){
-        return set_copy(s, s->size);
+        return _set_copy(s, s->size);
     }else{
         assert(s->cmp == t->cmp && s->hash == t->hash);
 
@@ -345,21 +345,21 @@ set_diff(T s, T t)
 
 static
 int 
-cmpatom(const void *x, const void *y)
+_cmpatom(const void *x, const void *y)
 {
     return x != y;
 }
 
 static
 unsigned long
-hashatom(const void *x)
+_hashatom(const void *x)
 {
     return (unsigned long) x >> 2;
 }
 
 static
 T
-set_copy(T t, int hint)
+_set_copy(T t, int hint)
 {
     T set;
     int i, j;

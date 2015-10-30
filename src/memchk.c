@@ -44,7 +44,7 @@ static struct descriptor freelist = {.free = &freelist};
 
 static 
 struct descriptor *
-find(const void *ptr)
+_find(const void *ptr)
 {
     struct descriptor *bp = htab[hash(ptr, htab)];
 
@@ -57,7 +57,7 @@ find(const void *ptr)
 
 static 
 struct descriptor *
-dalloc(void *ptr, 
+_dalloc(void *ptr, 
         ssize_t size,
         const char *file,
         const char *func,
@@ -100,8 +100,8 @@ mem_free(void *ptr,
         if(((unsigned long) ptr) % (sizeof(union align)) != 0){ 
             except_raise(&AssertFailedException, file, func, "mem free align", line);
         } 
-        else if(NULL == (bp = find(ptr))){ 
-            except_raise(&AssertFailedException, file, func, "mem_free find bp", line);
+        else if(NULL == (bp = _find(ptr))){ 
+            except_raise(&AssertFailedException, file, func, "mem_free _find bp", line);
         }
         else if(bp->free){ 
             except_raise(&AssertFailedException, file, func, "mem_free double free", line);
@@ -128,7 +128,7 @@ mem_resize(ssize_t len,
     if(((unsigned long) ptr) % (sizeof(union align)) != 0){ 
         except_raise(&AssertFailedException, file, func, "mem_resize align", line);
     } 
-    else if(NULL == (bp = find(ptr))){ 
+    else if(NULL == (bp = _find(ptr))){ 
         except_raise(&AssertFailedException, file, func, "mem_resize find bp", line);
     }
     else if(bp->free){ 
@@ -181,7 +181,7 @@ mem_alloc(ssize_t len,
             bp->size -= len;
 
             ptr = (char *)bp->ptr + bp->size;
-            if(NULL != (bp = dalloc(ptr, len, file, func, line))){
+            if(NULL != (bp = _dalloc(ptr, len, file, func, line))){
                 unsigned int h = hash(ptr, htab);
                 bp->link = htab[h];
                 htab[h] = bp;
@@ -196,7 +196,7 @@ mem_alloc(ssize_t len,
             struct descriptor *newptr;
 
             if(NULL == (ptr = malloc(len + NALLOC)) ||
-                NULL == (newptr = dalloc(ptr, len + NALLOC,
+                NULL == (newptr = _dalloc(ptr, len + NALLOC,
                         __FILE__, __func__, __LINE__))){
 
                 RAISE(MemFailedException, "malloc failed");

@@ -15,10 +15,10 @@ struct T{
     ssize_t head;
 };
 
-static void expand(T seq);
+static void _expand(T seq);
 
-static inline void *access_get(T seq, ssize_t position);
-static inline void *access_set(T seq, ssize_t position, void *x);
+static inline void *_access_get(T seq, ssize_t position);
+static inline void *_access_set(T seq, ssize_t position, void *x);
 
 T
 seq_new(ssize_t hint)
@@ -82,7 +82,7 @@ seq_get(T seq, ssize_t position)
     assert(seq);
     assert(position >= 0 && position < seq->length);
 
-    return access_get(seq, position);
+    return _access_get(seq, position);
 }
 
 
@@ -94,8 +94,8 @@ seq_put(T seq, ssize_t position, void *x)
     assert(seq);
     assert(position >= 0 && position < seq->length);
 
-    prev = access_get(seq, position);
-    access_set(seq, position, x);
+    prev = _access_get(seq, position);
+    _access_set(seq, position, x);
 
     return prev;
 
@@ -110,13 +110,13 @@ seq_add_low(T seq, void *x)
     assert(seq);
 
     if(seq->length == seq->array.length)
-        expand(seq);
+        _expand(seq);
     if(--seq->head < 0)
         seq->head = seq->array.length - 1;
 
     seq->length++;
 
-    return access_set(seq, position, x);
+    return _access_set(seq, position, x);
 }
 
 
@@ -128,10 +128,10 @@ seq_add_high(T seq, void *x)
     assert(seq);
 
     if(seq->length == seq->array.length)
-        expand(seq);
+        _expand(seq);
     position = seq->length ++;
 
-    return access_set(seq, position, x);
+    return _access_set(seq, position, x);
 }
 
 
@@ -146,7 +146,7 @@ seq_remove_low(T seq)
 
     position = 0;
 
-    x = access_get(seq, position);
+    x = _access_get(seq, position);
 
     seq->head = (seq->head + 1) % seq->array.length;
     --seq->length;
@@ -164,13 +164,13 @@ seq_remove_high(T seq)
     assert(seq);
     assert(seq->length > 0);
     position = --seq->length;
-    return access_get(seq, position);
+    return _access_get(seq, position);
 }
 
 
 static
 void 
-expand(T seq)
+_expand(T seq)
 {
     void **old;
     ssize_t n ;
@@ -192,7 +192,7 @@ expand(T seq)
 static
 inline 
 void *
-access_get(T seq, ssize_t position)
+_access_get(T seq, ssize_t position)
 {
     return ((void **)seq->array.array)[
         (seq->head + position) % seq->array.length];
@@ -203,7 +203,7 @@ access_get(T seq, ssize_t position)
 static
 inline
 void *
-access_set(T seq, ssize_t position, void *x)
+_access_set(T seq, ssize_t position, void *x)
 {
     return ((void **)seq->array.array)[
         (seq->head + position) % seq->array.length] = x;

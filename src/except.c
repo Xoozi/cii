@@ -7,15 +7,15 @@
 
 #define T except_t
 
-static void default_except_handler(const T *e,
+static void _default_except_handler(const T *e,
                                     const char *file,
                                     const char *func,
                                     const char *reason,
                                     int line);
 
-static void signal_except_handler(int sig);
+static void _signal_except_handler(int sig);
 
-volatile struct except_context except_ctx = {.default_handler = default_except_handler, 
+volatile struct except_context except_ctx = {.default_handler = _default_except_handler, 
                                         .except_flag = Except_entered,
                                         .sig = 0,
                                         .stack = NULL};
@@ -65,7 +65,7 @@ except_raise(const T *e,
 void 
 set_signal_except(int sig)
 {
-   signal(sig, signal_except_handler); 
+   signal(sig, _signal_except_handler); 
 }
 
 int
@@ -77,7 +77,7 @@ get_except_signal()
 
 static
 void 
-default_except_handler(const T *e,
+_default_except_handler(const T *e,
                         const char *file,
                         const char *func,
                         const char *reason,
@@ -95,7 +95,7 @@ default_except_handler(const T *e,
 
 static
 void 
-signal_except_handler(int sig)
+_signal_except_handler(int sig)
 {
     except_ctx.sig = sig;
     except_raise(&SignalException,

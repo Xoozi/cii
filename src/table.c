@@ -20,8 +20,8 @@ struct T{
     }**buckets;
 };
 
-static int cmpatom(const void *x, const void *y);
-static unsigned long hashatom(const void *key);
+static int _cmpatom(const void *x, const void *y);
+static unsigned long _hashatom(const void *key);
 
 T
 table_new(int hint,
@@ -41,8 +41,8 @@ table_new(int hint,
     table = ALLOC(sizeof(*table) + 
             primes[i-1] * sizeof(table->buckets[0]));
     table->size = primes[i-1];
-    table->cmp = cmp ? cmp : cmpatom;
-    table->hash = hash ? hash : hashatom;
+    table->cmp = cmp ? cmp : _cmpatom;
+    table->hash = hash ? hash : _hashatom;
     table->buckets = (struct binding **) (table + 1);
 
     for(i = 0; i < table->size; i++)
@@ -205,14 +205,14 @@ table_free(T *table)
 
 static
 int 
-cmpatom(const void *x, const void *y)
+_cmpatom(const void *x, const void *y)
 {
     return x != y;
 }
 
 static
 unsigned long
-hashatom(const void *key)
+_hashatom(const void *key)
 {
     return (unsigned long) key >> 2;
 }

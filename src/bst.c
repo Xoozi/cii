@@ -10,10 +10,10 @@ struct T{
 };
 
 
-static int      cmp_simple(const void *x, const void *y);
-static T        bst_remove_child(T bst, T child);
-static T        bst_replace_child(T bst, T child, T node);
-static void    *bst_set_key(T bst, void *key);
+static int      _cmp_simple(const void *x, const void *y);
+static T        _bst_remove_child(T bst, T child);
+static T        _bst_replace_child(T bst, T child, T node);
+static void    *_bst_set_key(T bst, void *key);
 
 T   
 bst_new
@@ -107,7 +107,7 @@ bst_find
         return NULL;
 
     if(NULL == cmp)
-        cmp = cmp_simple;
+        cmp = _cmp_simple;
     flag = cmp(key, bst->key);
     if(0 == flag)
         return bst;
@@ -140,7 +140,7 @@ bst_insert
     }
 
     if(NULL == cmp)
-        cmp = cmp_simple;
+        cmp = _cmp_simple;
     flag = cmp(key, tree->key);
     if(0 == flag)
         return tree;
@@ -161,7 +161,7 @@ bst_insert
     int flag;
 
     if(NULL == cmp)
-        cmp = cmp_simple;
+        cmp = _cmp_simple;
     tree = &bst;
     parent = NULL;
     while(NULL != *tree){
@@ -193,16 +193,16 @@ bst_delete
     assert(bst);
     parent = bst->parent;
     if(NULL == bst->left && NULL == bst->right){
-        return bst_remove_child(parent, bst);
+        return _bst_remove_child(parent, bst);
     }else if(NULL != bst->right && NULL != bst->left){
         successor = bst_successor(bst);
-        bst_remove_child(successor->parent, successor);
-        bst_set_key(bst, bst_get_key(successor));
+        _bst_remove_child(successor->parent, successor);
+        _bst_set_key(bst, bst_get_key(successor));
     }
     else if(NULL != bst->right){
-        return bst_replace_child(parent, bst, bst->right);
+        return _bst_replace_child(parent, bst, bst->right);
     }else if(NULL != bst->left){
-        return bst_replace_child(parent, bst, bst->left);
+        return _bst_replace_child(parent, bst, bst->left);
     }
 }
 
@@ -224,7 +224,7 @@ bst_traverse
 
 static
 int 
-cmp_simple
+_cmp_simple
 (const void *x, const void *y)
 {
     if(x == y)
@@ -237,7 +237,7 @@ cmp_simple
 
 static
 T
-bst_remove_child
+_bst_remove_child
 (T bst, T child)
 {
     assert(child->parent == bst);
@@ -257,7 +257,7 @@ bst_remove_child
 
 static 
 T
-bst_replace_child
+_bst_replace_child
 (T bst, T child, T node)
 {
     assert(child->parent = bst);
@@ -280,7 +280,7 @@ bst_replace_child
 
 static
 void *
-bst_set_key
+_bst_set_key
 (T bst, void *key)
 {
     assert(bst);
