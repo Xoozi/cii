@@ -406,7 +406,15 @@ ssize_t
 text_any
 (T text, ssize_t i, T set)
 {
-    return 0;
+    assert(text.len >= 0 && text.str);
+    assert(set.len >= 0 && set.str);
+    i = idx(i, text.len);
+    assert(i >= 0 && i <= text.len);
+
+    if(i < text.len && memchr(set.str, text.str[i], set.len)){
+        return i + 1;
+    }
+    return -1;
 }
 
 
@@ -414,7 +422,16 @@ ssize_t
 text_many
 (T text, ssize_t i, ssize_t j, T set)
 {
-    return 0;
+    assert(set.len >= 0 && set.str);
+    convert(text, i, j);
+    if(i < j && memchr(set.str, text.str[i], set.len)){
+        do{
+            i++;
+        }while(i < j &&
+                memchr(set.str, text.str[i], set.len));
+        return i;
+    }
+    return -1;
 }
 
 
@@ -422,7 +439,16 @@ ssize_t
 text_rmany
 (T text, ssize_t i, ssize_t j, T set)
 {
-    return 0;
+    assert(set.len >= 0 && set.str);
+    convert(text, i, j);
+    if(j > i && memchr(set.str, text.str[j-1], set.len)){
+        do{
+            --j;
+        }while(j >= i &&
+                memchr(set.str, text.str[j], set.len));
+        return j;
+    }
+    return -1;
 }
 
 
@@ -432,7 +458,19 @@ ssize_t
 text_match
 (T text, ssize_t i, ssize_t j, T str)
 {
-    return 0;
+    assert(str.len >= 0 && str.str);
+    convert(text, i, j);
+
+    if(0 == str.len){
+        return i;
+    }else if(1 == str.len){
+        if(i < j && text.str[i] == *str.str){
+            return i + 1;
+        }
+    }else if(i + str.len <= j && equal(text, i, str)){
+        return i + str.len;
+    }
+    return -1;
 }
 
 
@@ -440,7 +478,20 @@ ssize_t
 text_rmatch
 (T text, ssize_t i, ssize_t j, T str)
 {
-    return 0;
+    assert(str.len >= 0 && str.str);
+    convert(text, i, j);
+
+    if(0 == str.len){
+        return j;
+    }else if(1 == str.len){
+        if(j > i && text.str[j-1] == *str.str){
+            return j;
+        }
+    }else if(j - str.len >= i &&
+            equal(text, j - str.len, str)){
+        return j - str.len;
+    }
+    return -1;
 }
 
 

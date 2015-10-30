@@ -107,7 +107,7 @@ main(int argc, char *argv[])
 
     text_t tstr0 = text_put("na");
     text_t tstr1 = text_put("tree");
-    text_t tstr2 = text_put("trae");
+    text_t tstr2 = text_put("kissing");
     printf("tp:%.*s\n", tp.len, tp.str);
     size = text_find(tp, 0, -1, tstr0);
     printf("\ttstr0:%.*s, text_find:%d\n", tstr0.len, tstr0.str, size);
@@ -123,6 +123,27 @@ main(int argc, char *argv[])
     printf("\ttstr1:%.*s, text_rfind:%d\n", tstr1.len, tstr1.str, size);
     size = text_rfind(tp, 0, -1, tstr2);
     printf("\ttstr2:%.*s, text_rfind:%d\n", tstr2.len, tstr2.str, size);
+
+    size = text_any(tp, 3, tstr0);
+    printf("tstr0:%.*s, text_any:%d\n", tstr0.len, tstr0.str, size);
+    size = text_any(tp, 3, tstr1);
+    printf("tstr1:%.*s, text_any:%d\n", tstr1.len, tstr1.str, size);
+
+
+    text_t tm0 = text_put("thrall");
+    text_t tm1 = text_put("kisng");
+    text_t tm2 = text_put("kissing");
+    size = text_many(tp, 0, -1, tm0);
+    printf("tm0:%.*s, text_many:%d\n", tm0.len, tm0.str, size);
+    size = text_rmany(tp, 0, -1, tm1);
+    printf("tm1:%.*s, text_rmany:%d\n", tm1.len, tm1.str, size);
+
+    size = text_match(tp, 0, -1, tm0);
+    printf("tm0:%.*s, text_match:%d\n", tm0.len, tm0.str, size);
+    size = text_rmatch(tp, 0, -1, tm1);
+    printf("tm1:%.*s, text_rmatch:%d\n", tm1.len, tm1.str, size);
+    size = text_rmatch(tp, 0, -1, tm2);
+    printf("tm2:%.*s, text_rmatch:%d\n", tm2.len, tm2.str, size);
 
 	text_restore(&mark);
     return 0;
