@@ -9,7 +9,8 @@ LIB = $(LIB_DIR)/libcii.a
 objects = arith.o assert.o except.o memchk.o atom.o\
 		  arena.o list.o dlist.o table.o set.o array.o\
 		  seq.o ring.o bit.o sparsearray.o fmt.o\
-		  bst.o stack.o str.o text.o
+		  bst.o stack.o str.o text.o digraph.o\
+		  indexminpq.o
 
 all: $(objects)
 	ar crs $(LIB) $(objects)
@@ -72,6 +73,12 @@ str.o: str.c str.h assert.h mem.h
 	gcc -pg -g -c $< -I$(INCLUDE_DIR)
 
 text.o: text.c text.h assert.h mem.h
+	gcc -pg -g -c $< -I$(INCLUDE_DIR)
+
+indexminpq.o: indexminpq.c indexminpq.h assert.h mem.h
+	gcc -pg -g -c $< -I$(INCLUDE_DIR)
+
+digraph.o: digraph.c digraph.h assert.h mem.h arena.h
 	gcc -pg -g -c $< -I$(INCLUDE_DIR)
 
 clean:

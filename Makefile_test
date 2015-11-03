@@ -11,7 +11,8 @@ LIB_NAME = cii
 all: double t_arith t_except t_mem t_atom t_arena\
 	t_list t_dlist wf xref t_array t_seq t_ring\
 	t_bit t_sparsearray t_fmt t_bst t_stack_postfix\
-	t_stack_midfix_to_postfix t_str t_text
+	t_stack_midfix_to_postfix t_str t_text t_digraph\
+	t_indexminpq
 
 double: double.c cii.h $(LIB_CII)
 	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR)
@@ -75,3 +76,9 @@ t_str: t_str.c mem.h str.h
 
 t_text: t_text.c mem.h text.h
 	gcc -pg -g -o $(BIN_DIR)/$@ $< test/getword.c -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+
+t_digraph: t_digraph.c mem.h arena.h digraph.h
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
+
+t_indexminpq: t_indexminpq.c mem.h indexminpq.h
+	gcc -pg -g -o $(BIN_DIR)/$@ $< -I$(INCLUDE_DIR) -L$(LIB_DIR) -l$(LIB_NAME)
