@@ -21,22 +21,14 @@ struct adj{
  */
 struct T{
     /**
-     * 顶点数
-     */
-    int count;
-
-    /**
      * 图数据及算法附属数据所用的内存池
      */
     arena_t     arena;
 
     /**
      * 邻接表数组
-     * adj_array[i]内容为i节点的邻接表
-     * adj项代表以i为起点 to为终点的边
-     * weight为权重
      */
-    struct adj **adj_array;
+    seq_t   adj_seq;
 };
 
 struct digraph_sr_t{
@@ -55,17 +47,13 @@ static void _relax(digraph_t digraph, digraph_sr_t dsr, iminpq_t iminpq, int v);
 
 T
 digraph_new
-(int v)
+(int hint)
 {
     T digraph;
     int i;
-    assert(v >= 0);
-    digraph = ALLOC(sizeof(*digraph) + v * sizeof(digraph->adj_array[0]));
-    digraph->count = v;
+    digraph = ALLOC(sizeof(*digraph));
     digraph->arena = arena_new();
-    digraph->adj_array = (struct adj **) (digraph + 1);
-    for(i = 0; i < digraph->count; i++)
-        digraph->adj_array[i] = NULL;
+    digraph->adj_seq = seq_new(hint+512);
     return digraph;
 }
 
@@ -77,15 +65,37 @@ digraph_free
     assert(digraph);
     assert(*digraph);
     arena_free((*digraph)->arena);
+    seq_free(&((*digraph)->adj_seq));
     FREE(*digraph);
 }
 
+
+void             
+digraph_add         
+(T digraph, int index)
+{
+    assert(digraph);
+    assert(seq_length(digraph->adj_seq) == index);
+    seq_add_high(digraph->adj_seq, NULL);
+}
+
+
+void             
+digraph_add_seg     
+(T digraph, int len){
+    int i;
+    assert(digraph);
+    for(i = 0; i < len; i++){
+        seq_add_high(digraph->adj_seq, NULL);
+    }
+}
 
 int
 digraph_count
 (T digraph)
 {
-    return digraph->count;
+    assert(digraph);
+    return seq_length(digraph->adj_seq);
 }
 
 
@@ -95,15 +105,16 @@ digraph_connect
 {
     struct adj *adj_list, *new_adj;
     assert(digraph);
-    assert(from >= 0 && from < digraph->count);
-    assert(to >= 0 && to < digraph->count);
-    adj_list = digraph->adj_array[from];
+    assert(from != to);
+    assert(from >= 0 && from < digraph_count(digraph));
+    assert(to >= 0 && to < digraph_count(digraph));
+    adj_list = seq_get(digraph->adj_seq, from);
     new_adj  = ARENA_ALLOC(digraph->arena, sizeof(*new_adj));
     new_adj->link = adj_list;
     new_adj->from = from;
     new_adj->to = to;
     new_adj->weight = weight;
-    digraph->adj_array[from] = new_adj;
+    seq_put(digraph->adj_seq, from, new_adj);
 }
 
 
@@ -113,9 +124,10 @@ digraph_is_connect
 {
     struct adj *adj_list;
     assert(digraph);
-    assert(from >= 0 && from < digraph->count);
-    assert(to >= 0 && to < digraph->count);
-    adj_list = digraph->adj_array[from];
+    assert(from != to);
+    assert(from >= 0 && from < digraph_count(digraph));
+    assert(to >= 0 && to < digraph_count(digraph));
+    adj_list = seq_get(digraph->adj_seq, from);
     while(adj_list){
         if(to == adj_list->to){
             return 1;
@@ -135,12 +147,12 @@ digraph_dijkstra
     iminpq_t    iminpq;
 
     assert(digraph);
-    assert(start >= 0 && start < digraph->count);
+    assert(start >= 0 && start < digraph_count(digraph));
 
-    iminpq = iminpq_new(digraph->count);
+    iminpq = iminpq_new(digraph_count(digraph));
     
     sr = ALLOC(sizeof(*sr));
-    sr->size = digraph->count;
+    sr->size = digraph_count(digraph);
     sr->start = start;
     sr->dist_to = ALLOC(sr->size * sizeof(double));
     sr->edge_array = ALLOC(sr->size * sizeof(struct adj *));
@@ -175,7 +187,7 @@ _relax
     dist_to = dsr->dist_to;
     edge_array = dsr->edge_array;
 
-    adj_list = digraph->adj_array[v];
+    adj_list = seq_get(digraph->adj_seq, v);
     while(adj_list){
         w = adj_list->to;
         weight = adj_list->weight;
