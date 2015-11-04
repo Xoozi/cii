@@ -5,11 +5,13 @@
 #include"arena.h"
 #include"digraph.h"
 #include"indexminpq.h"
+#include"seq.h"
 
 #define T digraph_t
 
 struct adj{
     struct adj  *link;
+    int         from;
     int         to;
     double      weight;
 };
@@ -45,7 +47,8 @@ struct digraph_sr_t{
 };
 
 struct digraph_path_t{
-    int size;
+    int     start;
+    seq_t   node_seq;
 };
 
 static void _relax(digraph_t digraph, digraph_sr_t dsr, iminpq_t iminpq, int v);
@@ -88,7 +91,7 @@ digraph_count
 
 void
 digraph_connect
-(T digraph, int from, int to)
+(T digraph, int from, int to, double weight)
 {
     struct adj *adj_list, *new_adj;
     assert(digraph);
@@ -97,6 +100,9 @@ digraph_connect
     adj_list = digraph->adj_array[from];
     new_adj  = ARENA_ALLOC(digraph->arena, sizeof(*new_adj));
     new_adj->link = adj_list;
+    new_adj->from = from;
+    new_adj->to = to;
+    new_adj->weight = weight;
     digraph->adj_array[from] = new_adj;
 }
 
@@ -178,7 +184,7 @@ _relax
             edge_array[w] = adj_list;
         
             if(iminpq_contains(iminpq, w))
-                iminpq_change(iminpq, w, dist_to[w]);
+                iminpq_change_key(iminpq, w, dist_to[w]);
             else
                 iminpq_insert(iminpq, w, dist_to[w]);
         }
@@ -228,12 +234,47 @@ digraph_sr_dist
     return dsr->dist_to[end];
 }
 
+/*
+ *
+struct digraph_path_t{
+    int     start;
+    seq_t   node_seq;
+};
+struct digraph_sr_t{
+    int size;
+    int start;
+    struct adj  **edge_array;
+    double      *dist_to;
+};
+ */
 
 digraph_path_t
 digraph_sr_path_to
 (digraph_sr_t dsr, int end)
 {
-    return NULL;
+    digraph_path_t path;
+    assert(dsr);
+    assert(end >= 0 && end <= dsr->size);
+
+    if(!digraph_sr_has_path(dsr, end)){
+        return NULL;
+    }
+
+    path = ALLOC(sizeof(*path));
+    path->start = dsr->start;
+    path->node_seq = seq_new(512);
+
+    struct adj  **edge_array;
+    struct adj  *edge;
+
+    edge_array = dsr->edge_array;
+    
+    edge = edge_array[end];
+    while(edge){
+        seq_add_low(path->node_seq, edge);
+        edge = edge_array[edge->from];
+    }
+    return path;
 }
 
 
@@ -241,7 +282,10 @@ void
 digraph_path_free
 (digraph_path_t *dp)
 {
-
+    assert(dp);
+    assert(*dp);
+    seq_free(&((*dp)->node_seq));
+    FREE(*dp);
 }
 
 
@@ -249,21 +293,18 @@ int
 digraph_path_length
 (digraph_path_t dp)
 {
-    return 0;
+    assert(dp);
+    return seq_length(dp->node_seq);
 }
 
 
-int
-digraph_path_from
+int              
+digraph_path_get     
 (digraph_path_t dp, int pos)
 {
-    return 0;
+    struct adj  *edge;
+    assert(dp);
+    edge = seq_get(dp->node_seq, pos);
+    return edge->to;
 }
 
-
-int
-digraph_path_to
-(digraph_path_t dp, int pos)
-{
-    return 0;
-}
